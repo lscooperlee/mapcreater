@@ -1,0 +1,4 @@
+
+pyside-uic  ui_mapcreater.ui > ui_mapcreater.py 
+pyside-uic  ui_newmap.ui > ui_newmap.py 
+python mapcreater.py
