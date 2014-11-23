@@ -1,8 +1,7 @@
 
 
 from PySide import QtGui, QtCore
-from collections import deque
-from map import Map
+from map import Map, Route
 
 class MapCanvas(QtGui.QWidget):
 
@@ -15,13 +14,15 @@ class MapCanvas(QtGui.QWidget):
     def __init__(self,parent):
         super().__init__(parent)
         self.parent=parent
-        self.points=deque(maxlen=2)
         self.leftpressing=False
         self.drawing=None
+        self.isdrawingmap=True
 
         self.pen=None
+        self.eraseWidth=None
         self.cursor=None
         self.mapimage=None
+        self.routeimage=None
 
         self.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding); 
@@ -33,18 +34,18 @@ class MapCanvas(QtGui.QWidget):
         self.SIG_USEPEN.connect(self.prepareUsePen)
 
     def paintEvent(self, e):
-        if self.mapimage:
+        if self.mapimage and self.routeimage:
             qp=QtGui.QPainter(self)
             qp.drawImage(e.rect(),self.mapimage,e.rect())
+            qp.drawImage(e.rect(),self.routeimage,e.rect())
 
     def mousePressEvent(self, e):
         if e.button() == QtCore.Qt.LeftButton:
-            self.points.append(e.pos())                      
             self.leftpressing=True
+            self.mapimage.points.append(e.pos())
 
     def mouseMoveEvent(self, e):
         if self.leftpressing == True:
-            self.points.append(e.pos())
             self.drawto(e.pos())
             self.update()
 
@@ -52,39 +53,45 @@ class MapCanvas(QtGui.QWidget):
         if self.leftpressing == True:
             self.leftpressing = False
 
+
     def drawto(self, point):
-        pt=QtGui.QPainter(self.mapimage)
 
         if self.drawing == True:
-            pt.setPen(self.pen)
-            pt.drawLine(self.points[-2],self.points[-1])
+            if self.isdrawingmap == True:
+                self.mapimage.draw(point, self.pen)
+            else:
+                self.routeimage.draw(point, self.pen)
         elif self.drawing == False:        
-            rect=QtCore.QRect(point, QtCore.QSize(20,20))
-            pt.eraseRect(rect)
+            if self.isdrawingmap == True:
+                self.mapimage.erase(point, self.eraseWidth)
+            else:
+                self.routeimage.erase(point, self.eraseWidth)
 
 
     @QtCore.Slot()
     def createMap(self, width, height):
-        self.mapimage=Map(width,height)
-        self.prepareDrawMap(1)
-
-
+        self.prepareDrawMap(2)
+        self.mapimage=Map(width,height,self.pen)
+        self.routeimage=Route(self.mapimage, width, height)
 
     @QtCore.Slot()
     def prepareDrawMap(self, penWidth):
         self.pen=QtGui.QPen(QtCore.Qt.black, penWidth, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.drawing=True
+        self.isdrawingmap=True
 
     @QtCore.Slot()
     def prepareDrawRoute(self, penWidth):
         self.pen=QtGui.QPen(QtCore.Qt.red, penWidth, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
         self.drawing=True
+        self.isdrawingmap=False
 
     @QtCore.Slot()
     def prepareUseEraser(self, eraseWidth):
+        self.eraseWidth=eraseWidth
         self.drawing=False
 
     @QtCore.Slot()
     def prepareUsePen(self, penWidth):
-#        self.pen.setPenWidth(penWidth)
+        self.pen.setWidth(penWidth)
         self.drawing=True

@@ -14,6 +14,7 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.__initUI__()
+        self.defautcursor=self.cursor()
 
 
     def __initUI__(self):
@@ -47,16 +48,27 @@ class MainWindow(QtGui.QMainWindow):
 
     @QtCore.Slot()
     def on_actionDrawMap_triggered(self):
-        self.mc.SIG_DRAWMAP.emit(1)
+        self.ui.actionPen.setChecked(True)
+        self.mc.setCursor(self.defautcursor)
+        self.mc.SIG_DRAWMAP.emit(2)
 
     @QtCore.Slot()
     def on_actionDrawRoute_triggered(self):
+        self.ui.actionPen.setChecked(True)
+        self.mc.setCursor(self.defautcursor)
         self.mc.SIG_DRAWROUTE.emit(1)
 
     @QtCore.Slot()
     def on_actionPen_triggered(self):
-        self.mc.SIG_USEPEN.emit(1)
+        self.mc.setCursor(self.defautcursor)
+        self.mc.SIG_USEPEN.emit(2)
 
     @QtCore.Slot()
     def on_actionEraser_triggered(self):
-        self.mc.SIG_USEERASER.emit(1)
+        pix=QtGui.QPixmap(16,16)
+        pix.fill(QtCore.Qt.black)
+#        pix.load('res/eraser.png')
+        self.mc.setCursor(QtGui.QCursor(pix))
+#        self.mc.setCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
+#        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.SizeAllCursor))
+        self.mc.SIG_USEERASER.emit(16)

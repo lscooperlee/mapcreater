@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_mapcreater.ui'
 #
-# Created: Sun Nov 23 13:01:14 2014
+# Created: Mon Nov 24 02:17:56 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
