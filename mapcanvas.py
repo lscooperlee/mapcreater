@@ -25,8 +25,10 @@ class MapCanvas(QtGui.QWidget):
         self.routeimage=None
 
         self.setStyleSheet("background-color: rgb(255, 255, 255);")
-        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding); 
+#        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding); 
+#        self.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
 
+        
         self.SIG_NEWMAP.connect(self.createMap)
         self.SIG_DRAWMAP.connect(self.prepareDrawMap)
         self.SIG_DRAWROUTE.connect(self.prepareDrawRoute)
@@ -53,6 +55,7 @@ class MapCanvas(QtGui.QWidget):
         if self.leftpressing == True:
             self.leftpressing = False
 
+        
 
     def drawto(self, point):
 
@@ -73,6 +76,7 @@ class MapCanvas(QtGui.QWidget):
         self.prepareDrawMap(2)
         self.mapimage=Map(width,height,self.pen)
         self.routeimage=Route(self.mapimage, width, height)
+        self.resize(width, height)
 
     @QtCore.Slot()
     def prepareDrawMap(self, penWidth):

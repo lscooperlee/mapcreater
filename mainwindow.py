@@ -29,9 +29,18 @@ class MainWindow(QtGui.QMainWindow):
         g2.addAction(self.ui.actionEraser)
         g2.addAction(self.ui.actionPen)
 
-        self.mc=MapCanvas(self)
-        self.setCentralWidget(self.mc)
-        
+        self.sa=QtGui.QScrollArea()
+        self.sa.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn);
+        self.sa.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn);
+        self.sa.setWidgetResizable(False);
+
+
+        self.mc=MapCanvas(self.sa)
+#        self.lo=QtGui.QLayout(self.mc)
+        self.sa.setWidget(self.mc)
+
+        self.setCentralWidget(self.sa)
+        self.centralWidget().setAlignment(QtCore.Qt.AlignCenter)
 
     @QtCore.Slot()
     def on_actionNew_triggered(self):
