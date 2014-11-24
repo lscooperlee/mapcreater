@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_newmap.ui'
 #
-# Created: Mon Nov 24 14:30:10 2014
+# Created: Mon Nov 24 18:01:45 2014
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,9 +12,9 @@ from PySide import QtCore, QtGui
 class Ui_newmap(object):
     def setupUi(self, newmap):
         newmap.setObjectName("newmap")
-        newmap.resize(324, 162)
+        newmap.resize(320, 160)
         self.buttonBox = QtGui.QDialogButtonBox(newmap)
-        self.buttonBox.setGeometry(QtCore.QRect(120, 120, 181, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(10, 120, 301, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
@@ -53,7 +53,7 @@ class Ui_newmap(object):
         QtCore.QMetaObject.connectSlotsByName(newmap)
 
     def retranslateUi(self, newmap):
-        newmap.setWindowTitle(QtGui.QApplication.translate("newmap", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        newmap.setWindowTitle(QtGui.QApplication.translate("newmap", "new", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("newmap", "Width  ", None, QtGui.QApplication.UnicodeUTF8))
         self.X_2.setText(QtGui.QApplication.translate("newmap", "X", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("newmap", "Height", None, QtGui.QApplication.UnicodeUTF8))

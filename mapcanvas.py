@@ -15,6 +15,7 @@ class MapCanvas(QtGui.QWidget):
         super().__init__(parent)
         self.parent=parent
         self.leftpressing=False
+
         self.drawing=None
         self.isdrawingmap=True
 
@@ -24,10 +25,10 @@ class MapCanvas(QtGui.QWidget):
         self.mapimage=None
         self.routeimage=None
 
-        self.setStyleSheet("background-color: rgb(255, 255, 255);")
-#        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding); 
-#        self.setSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        self.curentTool=None
+        self.currentImage=None
 
+        self.setStyleSheet("background-color: rgb(255, 255, 255);")
         
         self.SIG_NEWMAP.connect(self.createMap)
         self.SIG_DRAWMAP.connect(self.prepareDrawMap)
@@ -48,7 +49,7 @@ class MapCanvas(QtGui.QWidget):
 
     def mouseMoveEvent(self, e):
         if self.leftpressing == True:
-            self.drawto(e.pos())
+            self.currentImage.work(e.pos(), self.currentTool)
             self.update()
 
     def mouseReleaseEvent(self, e):
@@ -57,45 +58,37 @@ class MapCanvas(QtGui.QWidget):
 
         
 
-    def drawto(self, point):
-
-        if self.drawing == True:
-            if self.isdrawingmap == True:
-                self.mapimage.draw(point, self.pen)
-            else:
-                self.routeimage.draw(point, self.pen)
-        elif self.drawing == False:        
-            if self.isdrawingmap == True:
-                self.mapimage.erase(point, self.eraseWidth)
-            else:
-                self.routeimage.erase(point, self.eraseWidth)
-
 
     @QtCore.Slot()
     def createMap(self, width, height):
-        self.prepareDrawMap(2)
-        self.mapimage=Map(width,height,self.pen)
+        self.mapimage=Map(width,height)
         self.routeimage=Route(self.mapimage, width, height)
         self.resize(width, height)
 
+        self.mapimage.pen=QtGui.QPen(QtCore.Qt.black, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        self.routeimage.pen=QtGui.QPen(QtCore.Qt.red, 2, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
+        self.mapimage.eraser=QtCore.QRect()
+        self.routeimage.eraser=QtCore.QRect()
+
+
     @QtCore.Slot()
     def prepareDrawMap(self, penWidth):
-        self.pen=QtGui.QPen(QtCore.Qt.black, penWidth, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-        self.drawing=True
-        self.isdrawingmap=True
+        self.currentImage=self.mapimage
+        self.currentTool=self.currentImage.pen
 
     @QtCore.Slot()
     def prepareDrawRoute(self, penWidth):
-        self.pen=QtGui.QPen(QtCore.Qt.red, penWidth, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin)
-        self.drawing=True
-        self.isdrawingmap=False
+        self.currentImage=self.routeimage
+        self.currentTool=self.currentImage.pen
 
     @QtCore.Slot()
     def prepareUseEraser(self, eraseWidth):
-        self.eraseWidth=eraseWidth
-        self.drawing=False
+        eraser=self.currentImage.eraser
+        eraser.setSize(QtCore.QSize(eraseWidth,eraseWidth))
+        self.currentTool=eraser
 
     @QtCore.Slot()
     def prepareUsePen(self, penWidth):
-        self.pen.setWidth(penWidth)
-        self.drawing=True
+        pen=self.currentImage.pen
+        pen.setWidth(penWidth)
+        self.currentTool=pen

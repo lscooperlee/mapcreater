@@ -16,28 +16,34 @@ class RobotMap(QtGui.QImage):
             pt.setPen(pen)
             pt.drawLine(self.points[-2],self.points[-1])
 
-    def erase(self, point, eraseWidth):
+    def erase(self, point, eraser):
         pt=QtGui.QPainter(self)
-        eraser=QtCore.QRect(point.x()-eraseWidth//2, point.y()-eraseWidth//2, eraseWidth,eraseWidth)
+        eraser.moveTo(point.x()-eraser.width()//2,point.y()-eraser.height()//2)
         pt.eraseRect(eraser)
 
+    def work(self, point, tool):
+        if isinstance(tool, QtGui.QPen):
+            self.draw(point,tool)
+        elif isinstance(tool, QtCore.QRect):
+            self.erase(point,tool)
 
 class Map(RobotMap):
 
-    def __init__(self, width, height, pen):
+    def __init__(self, width, height):
         super().__init__(width, height)
         self.fill(QtCore.Qt.white)
         self.points=deque(maxlen=2)
-        pt=QtGui.QPainter(self)
-        pt.setPen(pen)
-        upleft=QtCore.QPoint(0,0)
-        upright=QtCore.QPoint(width, 0)
-        downleft=QtCore.QPoint(0, height)
-        downright=QtCore.QPoint(width, height)
-        pt.drawLine(upleft,upright)
-        pt.drawLine(upleft,downleft)
-        pt.drawLine(downright,upright)
-        pt.drawLine(downright,downleft)
+
+#        pt=QtGui.QPainter(self)
+#        pt.setPen(QtGui.QPen(QtCore.Qt.black, 5, QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+#        upleft=QtCore.QPoint(0,0)
+#        upright=QtCore.QPoint(width, 0)
+#        downleft=QtCore.QPoint(0, height)
+#        downright=QtCore.QPoint(width, height)
+#        pt.drawLine(upleft,upright)
+#        pt.drawLine(upleft,downleft)
+#        pt.drawLine(downright,upright)
+#        pt.drawLine(downright,downleft)
 
 
 class Route(RobotMap):

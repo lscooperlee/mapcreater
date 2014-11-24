@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>324</width>
-    <height>162</height>
+    <width>320</width>
+    <height>160</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>new</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>10</x>
      <y>120</y>
-     <width>181</width>
+     <width>301</width>
      <height>32</height>
     </rect>
    </property>
