@@ -74,6 +74,7 @@ class MainWindow(QtGui.QMainWindow):
             total_scan=int(nm.ui.total_scan_lineedit.text())
 
             map_exporter=MapExporter(noise_rate, ang_noise_dir, dist_noise_dir,dist_ratio, total_scan)
+            self.mc.convertMap(map_exporter)
 #            map_exporter.export('filename')
     
 

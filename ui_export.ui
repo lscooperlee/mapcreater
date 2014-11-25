@@ -55,7 +55,7 @@
     <item>
      <widget class="QLineEdit" name="total_scan_lineedit">
       <property name="text">
-       <string>5000</string>
+       <string>100</string>
       </property>
      </widget>
     </item>
@@ -119,7 +119,7 @@
     <item>
      <widget class="QSlider" name="ang_noise_dir_slider">
       <property name="sliderPosition">
-       <number>55</number>
+       <number>52</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -154,7 +154,7 @@
     <item>
      <widget class="QSlider" name="dist_noise_dir_slider">
       <property name="sliderPosition">
-       <number>45</number>
+       <number>48</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -195,7 +195,7 @@
        </sizepolicy>
       </property>
       <property name="sliderPosition">
-       <number>8</number>
+       <number>2</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>

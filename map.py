@@ -2,12 +2,14 @@
 from PySide import QtGui, QtCore
 
 from collections import deque
-
+import math
 
 class RobotMap(QtGui.QImage):
 
     def __init__(self, width, height):
         super().__init__(width, height, QtGui.QImage.Format_ARGB32)
+        self.width=width
+        self.height=height
 
     def draw(self, point, pen):
         self.points.append(point)
@@ -46,6 +48,7 @@ class Map(RobotMap):
 #        pt.drawLine(downright,downleft)
 
 
+
 class Route(RobotMap):
 
     def __init__(self, parent, width, height):
@@ -69,15 +72,60 @@ class Route(RobotMap):
         pass
 
 
-    def __istaken(self, point):
-        ql=QtCore.QLineF(self.points[-1], point)
-        pace=[ x/ql.length() for x in range(int(ql.length()))] + [1]
+    def get_position_list(self, num_point):
+        ptlist=[(self.points[0].x(), self.points[0].y())]
+        for i in range(len(self.points)-1):
+            lf=QtCore.QLineF(self.points[i],self.points[i+1])
+            pace=[x/lf.length() for x in range(int(lf.length()))]
+            for i in pace:
+                p=lf.pointAt(i)
+                if ptlist[-1] != (p.x(), p.y()):
+                    ptlist.append((p.x(), p.y()))
+    
+        poslist=[((round(ptlist[0][0]), round(ptlist[0][1])),90)] #the init angle is along y axis, in Qt angle system, it is 90
+        for i in range(0, len(ptlist)-1, math.ceil(len(ptlist)/num_point)):
+            s=ptlist[i]
+            e=ptlist[i+1]
+            p=(round(s[0]), round(s[1]))    #int points, easy to check repeat, save memory
+#            p=(s[0], s[1])                 #float points, more accurate
+            d=math.sqrt((s[0]-e[0])**2+(s[1]-e[1])**2)
+            arad=math.acos((e[0]-s[0])/d)      #radian, so need to change to Qt angle, x axis is 0, y axis is 90
+            a=arad*180/math.pi if e[1]<s[1] else -arad*180/math.pi
+            if poslist[-1][0] != p:
+                poslist.append((p,a))
+        
+        return poslist
+
+    def get_scan_point(self, pa):
+        point_obstacle_list=[]
+        point=QtCore.QPointF(pa[0][0],pa[0][1])
+        angle=pa[1]
+        for i in range(180):
+            lf=QtCore.QLineF()
+            lf.setP1(point)
+            lf.setAngle(i-90+angle)            #angle is the direction that the robot faces.
+            lf.setLength(self.width+self.height)
+            pf=self.__find_overlap(lf)
+            point_obstacle_list.append((pf.x(),pf.y()))
+            
+        return point_obstacle_list
+
+    def __find_overlap(self, linef):
+        ql=linef
+        pace=[ x/ql.length() for x in range(int(ql.length()))] + [1.0]
         tp=QtGui.QColor(QtCore.Qt.white).rgba()
         for i in pace:
-            p=ql.pointAt(i).toPoint()
+            pf=ql.pointAt(i)
+            p=pf.toPoint()
             pp=self.parent.pixel(p)
             if pp != tp:
-                return True
+                return pf
 
-        return False
+        return None
 
+    def __istaken(self, point):
+        ql=QtCore.QLineF(self.points[-1], point)
+        if not self.__find_overlap(ql):
+            return False
+        else:
+            return True

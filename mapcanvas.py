@@ -3,6 +3,8 @@
 from PySide import QtGui, QtCore
 from map import Map, Route
 
+from collections import namedtuple
+
 class MapCanvas(QtGui.QWidget):
 
     SIG_NEWMAP=QtCore.Signal(int,int)
@@ -56,8 +58,17 @@ class MapCanvas(QtGui.QWidget):
         if self.leftpressing == True:
             self.leftpressing = False
 
-        
-
+    def convertMap(self, exporter):
+        poslist=self.routeimage.get_position_list(exporter.total_scan)
+        print(len(poslist))
+        log=exporter.export_info()
+        o=exporter.randomise(poslist[0])
+        log+=exporter.export_head(0,0,o[1])
+        for i in poslist[1:]:
+            p=exporter.randomise(i)
+            log+=exporter.export_head(o[0][1]-p[0][1],p[0][0]-o[0][0],p[1])
+#            olst=self.routeimage.get_scan_point(p)
+        print(log)
 
     @QtCore.Slot()
     def createMap(self, width, height):
