@@ -82,7 +82,7 @@ class Route(RobotMap):
                 if ptlist[-1] != (p.x(), p.y()):
                     ptlist.append((p.x(), p.y()))
     
-        poslist=[((round(ptlist[0][0]), round(ptlist[0][1])),90)] #the init angle is along y axis, in Qt angle system, it is 90
+        poslist=[(round(ptlist[0][0]), round(ptlist[0][1]),90)] #the init angle is along y axis, in Qt angle system, it is 90
         for i in range(0, len(ptlist)-1, math.ceil(len(ptlist)/num_point)):
             s=ptlist[i]
             e=ptlist[i+1]
@@ -91,15 +91,15 @@ class Route(RobotMap):
             d=math.sqrt((s[0]-e[0])**2+(s[1]-e[1])**2)
             arad=math.acos((e[0]-s[0])/d)      #radian, so need to change to Qt angle, x axis is 0, y axis is 90
             a=arad*180/math.pi if e[1]<s[1] else -arad*180/math.pi
-            if poslist[-1][0] != p:
-                poslist.append((p,a))
+            if poslist[-1][:-1] != p:
+                poslist.append((p[0],p[1],a))
         
         return poslist
 
     def get_scan_point(self, pa):
         point_obstacle_list=[]
-        point=QtCore.QPointF(pa[0][0],pa[0][1])
-        angle=pa[1]
+        point=QtCore.QPointF(pa[0],pa[1])
+        angle=pa[2]
         for i in range(180):
             lf=QtCore.QLineF()
             lf.setP1(point)

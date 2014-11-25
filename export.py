@@ -14,22 +14,21 @@ class MapExporter:
         self.scan_id=0
     
     def randomise(self, point):
-        newx=(1+self.dist_noise_dir-0.5+random.random()*self.noise_rate)*point[0][0]*self.dist_rate
-        newy=(1+self.dist_noise_dir-0.5+random.random()*self.noise_rate)*point[0][1]*self.dist_rate
-        newa=(1+self.ang_noise_dir-0.5+random.random()*self.noise_rate)*point[1]
+        newx=(1+self.dist_noise_dir-0.5+random.random()*self.noise_rate)*point[0]
+        newy=(1+self.dist_noise_dir-0.5+random.random()*self.noise_rate)*point[1]
+        newa=(1+self.ang_noise_dir-0.5+random.random()*self.noise_rate)*point[2]
 
-        return ((newx,newy),newa)
+        return (newx,newy,newa)
 
     def export_info(self):
         info="""LaserOdometryLog
-        #Created by MapCreater, a virtual map generator
-        version: 1
-        noise_rate: {0.noise_rate}
-        angle_noise_direction: {0.ang_noise_dir}
-        distance_noise_direction: {0.dist_noise_dir}
-        distance_rate: {0.dist_rate}
-        total_scan: {0.total_scan}
-        """.format(self)
+#Created by MapCreater, a virtual map generator
+version: 1
+noise_rate: {0.noise_rate}
+angle_noise_direction: {0.ang_noise_dir}
+distance_noise_direction: {0.dist_noise_dir}
+distance_rate: {0.dist_rate}
+total_scan: {0.total_scan}""".format(self)
 
         return info
 
@@ -43,19 +42,20 @@ class MapExporter:
         a=90-ra if 90 -ra < 180 else -90 - ra
 
         head="""
-        scan1Id: {0}
-        time: 0.00
-        velocities: 0.00 0.00 0.00
-        robot: 0.00 0.00 0.00
-        robotGlobal: {1:.0f} {2:.0f} {3:.2f}
-        """.format(self.scan_id, ry,rx,a)
+scan1Id: {0}
+time: 0.00
+velocities: 0.00 0.00 0.00
+robot: 0.00 0.00 0.00
+robotGlobal: {1:.0f} {2:.0f} {3:.2f}""".format(self.scan_id, ry*self.dist_rate,rx*self.dist_rate,a)
 
         return head
 
-    def export_scan(self, scan):
-        scan="""{0}
-        """.format(scan)
-
+    def export_scan(self, scanlist):
+        scan="""
+scan1:"""
+        for i in scanlist:
+            scan+=" {:.0f} {:.0f} ".format(i[0]*self.dist_rate,i[1]*self.dist_rate)
+        
         return scan
 
     def export(self, poslist, mapimage, outputfile):

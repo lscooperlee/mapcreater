@@ -63,11 +63,13 @@ class MapCanvas(QtGui.QWidget):
         print(len(poslist))
         log=exporter.export_info()
         o=exporter.randomise(poslist[0])
-        log+=exporter.export_head(0,0,o[1])
+        log+=exporter.export_head(0,0,o[2])
         for i in poslist[1:]:
             p=exporter.randomise(i)
-            log+=exporter.export_head(o[0][1]-p[0][1],p[0][0]-o[0][0],p[1])
-#            olst=self.routeimage.get_scan_point(p)
+            log+=exporter.export_head(o[1]-p[1],p[0]-o[0],p[2])
+            olst=self.routeimage.get_scan_point(p)
+            olst=[(a[1]-o[1],a[0]-o[0]) for a in olst ]
+            log+=exporter.export_scan(olst)
         print(log)
 
     @QtCore.Slot()
