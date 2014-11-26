@@ -91,8 +91,6 @@ class MainWindow(QtGui.QMainWindow):
             
     @QtCore.Slot()
     def on_export_finished(self,log):
-        print(log)
-        return
         fname=QtGui.QFileDialog.getSaveFileName(self,"Save File","map.log","log")
         with open(fname[0],'w') as fd:
             fd.write(log)
