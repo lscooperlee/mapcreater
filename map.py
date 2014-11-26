@@ -83,8 +83,8 @@ class Route(RobotMap):
                     ptlist.append((p.x(), p.y()))
     
         poslist=[(round(ptlist[0][0]), round(ptlist[0][1]),90)] #the init angle is along y axis, in Qt angle system, it is 90
-        for i in range(0, len(ptlist)-1, math.ceil(len(ptlist)/num_point)):
-            s=ptlist[i]
+        for i in range(1, len(ptlist)-1, math.ceil(len(ptlist)/num_point)):
+            s=ptlist[i-1]                   
             e=ptlist[i+1]
             p=(round(s[0]), round(s[1]))    #int points, easy to check repeat, save memory
 #            p=(s[0], s[1])                 #float points, more accurate

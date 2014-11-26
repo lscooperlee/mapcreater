@@ -11,8 +11,6 @@ from export import MapExporter
 
 class MainWindow(QtGui.QMainWindow):
 
-    SIG_EXPORT_FINISHED=QtCore.Signal(str)
-
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -77,35 +75,30 @@ class MainWindow(QtGui.QMainWindow):
             dist_ratio=int(nm.ui.dist_ratio_lineedit.text())
             total_scan=int(nm.ui.total_scan_lineedit.text())
 
+
+            fname=QtGui.QFileDialog.getSaveFileName(self,"Save File","map.log","log")
+
+            map_exporter=MapExporter(noise_rate, ang_noise_dir, dist_noise_dir,dist_ratio, total_scan)
+
+            ep=Thread(target=self.__do_export, args=(map_exporter,fname))
+            ep.start()
+
             self.progbar.move(self.rect().center())
             self.progbar.setRange(0,self.mc.getPosList(total_scan)-1)
             self.progbar.show()
             self.progbar.valueChanged.connect(self.progbar.setValue)
 
-            map_exporter=MapExporter(noise_rate, ang_noise_dir, dist_noise_dir,dist_ratio, total_scan)
 
-            ep=Thread(target=self.__do_export, args=(map_exporter,))
-            ep.start()
-
-            self.SIG_EXPORT_FINISHED.connect(self.on_export_finished)
-            
-    @QtCore.Slot()
-    def on_export_finished(self,log):
-        fname=QtGui.QFileDialog.getSaveFileName(self,"Save File","map.log","log")
-        with open(fname[0],'w') as fd:
-            fd.write(log)
-
-
-    def __do_export(self, exporter):
+    def __do_export(self, exporter, fname):
         count=0
-        log=""
-        for i in self.mc.convertMapGenerator(exporter):
-            count+=1
-            log+=i
-            self.progbar.valueChanged.emit(count)
+        with open(fname[0],'w') as fd:
+            for i in self.mc.convertMapGenerator(exporter):
+                count+=1
+                fd.write(i)
+                self.progbar.valueChanged.emit(count)
 
         self.progbar.hide()
-        self.SIG_EXPORT_FINISHED.emit(log)
+
 
     @QtCore.Slot()
     def on_actionDrawMap_triggered(self):

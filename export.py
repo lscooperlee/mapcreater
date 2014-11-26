@@ -14,6 +14,8 @@ class MapExporter:
         self.scan_id=0
     
     def randomise(self, point):
+        return point
+
         newx=(1+self.dist_noise_dir-0.5+random.random()*self.noise_rate)*point[0]
         newy=(1+self.dist_noise_dir-0.5+random.random()*self.noise_rate)*point[1]
         newa=(1+self.ang_noise_dir-0.5+random.random()*self.noise_rate)*point[2]
