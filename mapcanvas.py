@@ -58,19 +58,30 @@ class MapCanvas(QtGui.QWidget):
         if self.leftpressing == True:
             self.leftpressing = False
 
-    def convertMap(self, exporter):
+ 
+    def getPosList(self, total_scan):
+        return len(self.routeimage.get_position_list(total_scan))
+
+    def convertMapGenerator(self, exporter):
         poslist=self.routeimage.get_position_list(exporter.total_scan)
-        print(len(poslist))
+
         log=exporter.export_info()
+
         o=exporter.randomise(poslist[0])
-        log+=exporter.export_head(0,0,o[2])
+        olst=self.routeimage.get_scan_point(o)
+
+        log+=exporter.export_head(0,0,poslist[0][2])
+        log+=exporter.export_scan(olst)
+
         for i in poslist[1:]:
             p=exporter.randomise(i)
-            log+=exporter.export_head(o[1]-p[1],p[0]-o[0],p[2])
             olst=self.routeimage.get_scan_point(p)
-            olst=[(a[1]-o[1],a[0]-o[0]) for a in olst ]
+
+            log+=exporter.export_head(o[1]-p[1],p[0]-o[0],p[2])
             log+=exporter.export_scan(olst)
-        print(log)
+
+            yield log
+
 
     @QtCore.Slot()
     def createMap(self, width, height):
