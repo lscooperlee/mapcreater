@@ -73,7 +73,9 @@ class MapCanvas(QtGui.QWidget):
         log+=exporter.export_head(0,0,poslist[0][2])
         log+=exporter.export_scan(olst)
 
+        yield log
         for i in poslist[1:]:
+            log=""
             p=exporter.randomise(i)
             olst=self.routeimage.get_scan_point(p)
 
